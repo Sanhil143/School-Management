@@ -27,6 +27,7 @@ public class userController {
     user.setFirstName(user.getFirstName().toLowerCase().trim());
 		user.setLastName(user.getLastName().toLowerCase().trim());
 
+		//hash password
 		String hashedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
 		user.setPassword(hashedPassword);
 
