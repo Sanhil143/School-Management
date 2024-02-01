@@ -5,6 +5,7 @@ import com.sanhil.service.userService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,10 +22,14 @@ public class userController {
 			return ResponseEntity.badRequest().body("Please provide all fields");
 		}
 		if(userrepository.existsByEmail(user.getEmail())){
-			return ResponseEntity.badRequest().body("Email is already required");
+			return ResponseEntity.badRequest().body("Email is already Exist");
 		}
     user.setFirstName(user.getFirstName().toLowerCase().trim());
 		user.setLastName(user.getLastName().toLowerCase().trim());
+
+		//hash password
+		String hashedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
+		user.setPassword(hashedPassword);
 
 		userService savedUser = userrepository.save(user);
 		return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
