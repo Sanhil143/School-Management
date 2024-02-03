@@ -14,14 +14,14 @@ import java.util.List;
 @RequestMapping("/auth")
 public class userController {
 	@Autowired
-	private userRepository userrepository;
+	private userRepository UserRepository;
 
 	@PostMapping(value = "/signup")
 	private ResponseEntity<?> addUser(@RequestBody userService user){
 		if(user.getFirstName() == null || user.getLastName() == null || user.getEmail() == null || user.getPassword() == null || user.getRole() == null){
 			return ResponseEntity.badRequest().body("Please provide all fields");
 		}
-		if(userrepository.existsByEmail(user.getEmail())){
+		if(UserRepository.existsByEmail(user.getEmail())){
 			return ResponseEntity.badRequest().body("Email is already Exist");
 		}
     user.setFirstName(user.getFirstName().toLowerCase().trim());
@@ -31,12 +31,12 @@ public class userController {
 		String hashedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
 		user.setPassword(hashedPassword);
 
-		userService savedUser = userrepository.save(user);
+		userService savedUser = UserRepository.save(user);
 		return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
 	}
 
 	@GetMapping(value = "/allUser")
 	private List<userService> getAllUser(){
-		return userrepository.findAll();
+		return UserRepository.findAll();
 	}
 }
