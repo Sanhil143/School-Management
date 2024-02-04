@@ -50,7 +50,7 @@ public class userController {
 		if(!encoder.matches(loginUser.getPassword(),existingUser.getPassword())){
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect password");
 		}
-		existingUser.setPassword("मैं नहीं बताऊँगा");
+		existingUser.setPassword("मैं नहीं बताऊँगा!");
 		return  ResponseEntity.status(HttpStatus.OK).body(existingUser);
 	}
 
