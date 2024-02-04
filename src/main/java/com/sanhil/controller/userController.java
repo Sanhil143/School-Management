@@ -32,6 +32,7 @@ public class userController {
 		user.setPassword(hashedPassword);
 
 		userService savedUser = UserRepository.save(user);
+		savedUser.setPassword("मैं नहीं बताऊँगा");
 		return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
 	}
 
