@@ -9,13 +9,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-public class SecurityConfig {
+public class jwtSecurityConfig {
 
 
 	@Autowired
-	private JwtAuthenticationEntryPoint point;
+	private jwtAuthentication point;
 	@Autowired
-	private JwtAuthenticationFilter filter;
+	private jwtFilter filter;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
