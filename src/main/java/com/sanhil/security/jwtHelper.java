@@ -4,6 +4,7 @@ import com.sanhil.service.userService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -57,7 +58,7 @@ public class jwtHelper {
 									 .signWith(signingKey,SignatureAlgorithm.HS512)
 									 .compact();
 	}
-	public Boolean validateToken(String token, userService userservice){
+	public Boolean validateToken(String token, UserDetails userservice){
 		final Integer userId = getUseridfromToken(token);
 		return (userId.equals(userservice.getId()) && !isTokenExpired(token));
 	}
