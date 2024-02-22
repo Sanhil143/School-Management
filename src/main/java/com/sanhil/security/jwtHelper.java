@@ -58,7 +58,7 @@ public class jwtHelper {
 									 .signWith(signingKey,SignatureAlgorithm.HS512)
 									 .compact();
 	}
-	public Boolean validateToken(String token, UserDetails userservice){
+	public Boolean validateToken(String token, userService userservice){
 		final Integer userId = getUseridfromToken(token);
 		return (userId.equals(userservice.getId()) && !isTokenExpired(token));
 	}

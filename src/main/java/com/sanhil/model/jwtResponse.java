@@ -6,7 +6,7 @@ public class jwtResponse {
 
 	jwtResponse(){}
 
-	jwtResponse(String jwtToken,Integer userId){
+	public jwtResponse(String jwtToken, Integer userId){
 		this.jwtToken = jwtToken;
 		this.userId = userId;
 	}

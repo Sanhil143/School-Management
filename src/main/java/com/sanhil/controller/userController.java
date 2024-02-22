@@ -1,10 +1,14 @@
 package com.sanhil.controller;
 
+import com.sanhil.model.jwtRequest;
+import com.sanhil.model.jwtResponse;
 import com.sanhil.repository.userRepository;
+import com.sanhil.security.jwtHelper;
 import com.sanhil.service.userService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +19,13 @@ import java.util.List;
 public class userController {
 	@Autowired
 	private userRepository UserRepository;
+
+	@Autowired
+	private AuthenticationManager manager;
+
+	@Autowired
+	private jwtHelper helper;
+
 
 	@PostMapping(value = "/signup")
 	private ResponseEntity<?> addUser(@RequestBody userService user){
@@ -38,20 +49,21 @@ public class userController {
 	}
 
 	@PostMapping(value = "/login")
-	private ResponseEntity<?> loginUser(@RequestBody userService loginUser){
-		if(loginUser.getEmail() == null || loginUser.getPassword() == null){
-			return ResponseEntity.badRequest().body("Please provide email or password");
+	private ResponseEntity<jwtResponse> loginUser(@RequestBody jwtRequest request){
+		if(request.getEmail() == null || request.getPassword() == null){
+			return ResponseEntity.badRequest().body(new jwtResponse("Please provide email or password", null));
 		}
-		userService existingUser = UserRepository.findByEmail(loginUser.getEmail());
+		userService existingUser = UserRepository.findByEmail(request.getEmail());
 		if(existingUser == null){
-			return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Please provide valid email");
+			return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new jwtResponse("Invalid email or password", null));
 		}
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		if(!encoder.matches(loginUser.getPassword(),existingUser.getPassword())){
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect password");
+		if(!encoder.matches(request.getPassword(),existingUser.getPassword())){
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new jwtResponse("Invalid email or password", null));
 		}
 		existingUser.setPassword("मैं नहीं बताऊँगा!");
-		return  ResponseEntity.status(HttpStatus.OK).body(existingUser);
+		jwtResponse response = new jwtResponse("Login successful", existingUser.getId());
+		return  ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	@GetMapping(value = "/allUser")
