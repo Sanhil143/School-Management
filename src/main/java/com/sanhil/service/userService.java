@@ -1,6 +1,8 @@
 package com.sanhil.service;
 import jakarta.persistence.*;
+import org.springframework.stereotype.Service;
 
+@Service
 @Entity
 @Table(name = "tblUser",uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class userService {

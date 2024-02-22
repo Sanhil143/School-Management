@@ -81,7 +81,7 @@ public class jwtFilter extends OncePerRequestFilter {
 			Optional<userService> userDetailsOptional = this.userrepository.findById(userId);
 			if (userDetailsOptional.isPresent()) {
 				UserDetails userDetails = (UserDetails) userDetailsOptional.get();
-				Boolean validateToken = this.jwthelper.validateToken(token, userDetails);
+				Boolean validateToken = this.jwthelper.validateToken(token, userservice);
 				if (validateToken) {
 					UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 					authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
