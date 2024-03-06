@@ -1,14 +1,10 @@
 package com.sanhil.controller;
 
-import com.sanhil.model.jwtRequest;
-import com.sanhil.model.jwtResponse;
 import com.sanhil.repository.userRepository;
-import com.sanhil.security.jwtHelper;
 import com.sanhil.service.userService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +16,6 @@ public class userController {
 	@Autowired
 	private userRepository UserRepository;
 
-	@Autowired
-	private AuthenticationManager manager;
-
-	@Autowired
-	private jwtHelper helper;
-
-
 	@PostMapping(value = "/signup")
 	private ResponseEntity<?> addUser(@RequestBody userService user){
 		if(user.getFirstName() == null || user.getLastName() == null || user.getEmail() == null || user.getPassword() == null || user.getRole() == null){
@@ -36,7 +25,7 @@ public class userController {
 		if(existingUser  != null){
 			return ResponseEntity.badRequest().body("Email is already Exist");
 		}
-    user.setFirstName(user.getFirstName().toLowerCase().trim());
+		user.setFirstName(user.getFirstName().toLowerCase().trim());
 		user.setLastName(user.getLastName().toLowerCase().trim());
 
 		//hash password
@@ -49,21 +38,20 @@ public class userController {
 	}
 
 	@PostMapping(value = "/login")
-	private ResponseEntity<jwtResponse> loginUser(@RequestBody jwtRequest request){
-		if(request.getEmail() == null || request.getPassword() == null){
-			return ResponseEntity.badRequest().body(new jwtResponse("Please provide email or password", null));
+	private ResponseEntity<?> loginUser(@RequestBody userService loginUser){
+		if(loginUser.getEmail() == null || loginUser.getPassword() == null){
+			return ResponseEntity.badRequest().body("Please provide email or password");
 		}
-		userService existingUser = UserRepository.findByEmail(request.getEmail());
+		userService existingUser = UserRepository.findByEmail(loginUser.getEmail());
 		if(existingUser == null){
-			return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new jwtResponse("Invalid email or password", null));
+			return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Please provide valid email");
 		}
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		if(!encoder.matches(request.getPassword(),existingUser.getPassword())){
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new jwtResponse("Invalid email or password", null));
+		if(!encoder.matches(loginUser.getPassword(),existingUser.getPassword())){
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect password");
 		}
-		existingUser.setPassword("मैं नहीं बताऊँगा!!!");
-		jwtResponse response = new jwtResponse("Login successful", existingUser.getId());
-		return  ResponseEntity.status(HttpStatus.OK).body(response);
+		existingUser.setPassword("मैं नहीं बताऊँगा!");
+		return  ResponseEntity.status(HttpStatus.OK).body(existingUser);
 	}
 
 	@GetMapping(value = "/allUser")
